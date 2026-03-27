@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+  <rect width="1600" height="900" fill="#F8EBD7"/>
+  <rect x="78" y="78" width="1444" height="744" rx="36" fill="#FFF7EC" stroke="#D5B682" stroke-width="10"/>
+  <path d="M210 740V310C210 290 220 272 237 261L761 90C784 78 812 78 835 90L1359 261C1376 272 1386 290 1386 310V740" fill="#A62424"/>
+  <path d="M210 740V310C210 290 220 272 237 261L761 90C784 78 812 78 835 90L1359 261C1376 272 1386 290 1386 310V740" stroke="#7A171B" stroke-width="18"/>
+  <path d="M368 230L514 740" stroke="#F6D27D" stroke-width="34"/>
+  <path d="M630 164L740 740" stroke="#F6D27D" stroke-width="34"/>
+  <path d="M970 164L860 740" stroke="#F6D27D" stroke-width="34"/>
+  <path d="M1232 230L1086 740" stroke="#F6D27D" stroke-width="34"/>
+  <circle cx="800" cy="362" r="118" fill="#FFF7EC"/>
+  <text x="800" y="344" fill="#7A171B" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700" text-anchor="middle">Agrega aquí</text>
+  <text x="800" y="402" fill="#A62424" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="900" text-anchor="middle">tu imagen</text>
+  <text x="800" y="734" fill="#FFF7EC" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" text-anchor="middle">frontend/public/imagenes</text>
+</svg>
