@@ -117,6 +117,26 @@ as $$
   );
 $$;
 
+drop policy if exists "profiles read own" on profiles;
+drop policy if exists "profiles upsert own" on profiles;
+drop policy if exists "profiles update own" on profiles;
+drop policy if exists "plays read all" on plays;
+drop policy if exists "performances read all" on performances;
+drop policy if exists "price_tiers read all" on price_tiers;
+drop policy if exists "admin manage plays" on plays;
+drop policy if exists "admin manage performances" on performances;
+drop policy if exists "admin manage price_tiers" on price_tiers;
+drop policy if exists "orders insert own" on orders;
+drop policy if exists "orders read own" on orders;
+drop policy if exists "tickets insert own" on tickets;
+drop policy if exists "tickets read own" on tickets;
+drop policy if exists "tickets update admin" on tickets;
+drop policy if exists "coupon redemption insert own" on coupon_redemptions;
+drop policy if exists "coupon redemption read own" on coupon_redemptions;
+drop policy if exists "email outbox read own" on email_outbox;
+drop policy if exists "email outbox insert any authenticated" on email_outbox;
+drop policy if exists "email outbox read admin" on email_outbox;
+
 create policy "profiles read own"
 on profiles for select
 to authenticated
@@ -234,7 +254,6 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_new_user();
 
-
 create or replace function public.buy_tickets(
   p_performance_id bigint,
   p_price_tier_id bigint,
@@ -349,7 +368,8 @@ begin
     v_uid,
     coalesce(v_email,''),
     'Confirmación de compra - Teatro Nacional',
-    'Tu compra fue realizada. Total final: $' || (v_total/100.0)::text
+    'Tu compra fue realizada. Total final: $' ||
+    to_char(v_total::numeric / 100, 'FM999999999999990.00')
   );
 
   return json_build_object(
@@ -364,3 +384,42 @@ end;
 $$;
 
 grant execute on function public.buy_tickets(bigint, bigint, integer, text) to authenticated;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'play-images',
+  'play-images',
+  true,
+  5242880,
+  array['image/jpeg', 'image/png', 'image/webp']
+)
+on conflict (id) do update
+set public = true,
+    file_size_limit = 5242880,
+    allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp'];
+
+drop policy if exists "play images public read" on storage.objects;
+drop policy if exists "play images admin insert" on storage.objects;
+drop policy if exists "play images admin update" on storage.objects;
+drop policy if exists "play images admin delete" on storage.objects;
+
+create policy "play images public read"
+on storage.objects for select
+to anon, authenticated
+using (bucket_id = 'play-images');
+
+create policy "play images admin insert"
+on storage.objects for insert
+to authenticated
+with check (bucket_id = 'play-images' and public.is_admin(auth.uid()));
+
+create policy "play images admin update"
+on storage.objects for update
+to authenticated
+using (bucket_id = 'play-images' and public.is_admin(auth.uid()))
+with check (bucket_id = 'play-images' and public.is_admin(auth.uid()));
+
+create policy "play images admin delete"
+on storage.objects for delete
+to authenticated
+using (bucket_id = 'play-images' and public.is_admin(auth.uid()));
